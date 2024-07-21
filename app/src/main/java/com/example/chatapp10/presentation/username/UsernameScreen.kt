@@ -16,11 +16,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.flow.collectLatest
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 
 
 @Composable
 fun UsernameScreen(
-    viewModel: UsernameViewModel,
+    viewModel: UsernameViewModel = hiltViewModel(),
     onNavigate: (String) -> Unit
 ) {
     LaunchedEffect(key1 = true) {

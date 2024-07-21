@@ -33,12 +33,13 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.TextField
+import androidx.hilt.navigation.compose.hiltViewModel
 
 
 @Composable
 fun ChatScreen(
     username: String?,
-    viewModel: ChatViewModel
+    viewModel: ChatViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     LaunchedEffect(key1 = true) {

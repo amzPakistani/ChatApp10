@@ -2,10 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     kotlin("plugin.serialization") version "1.9.23"
-    kotlin("kapt")
-
-    id("dagger.hilt.android.plugin")
-    id("com.google.devtools.ksp") version "1.9.0-1.0.13"
+    id("com.google.devtools.ksp") version "1.9.20-1.0.14"
+    id("com.google.dagger.hilt.android") version "2.48.1"
 }
 
 android {
@@ -52,9 +50,11 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
 }
 
 dependencies {
+
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -96,15 +96,14 @@ dependencies {
     implementation (libs.hilt.android)
     implementation (libs.androidx.hilt.lifecycle.viewmodel)
     implementation (libs.androidx.hilt.navigation.compose)
+    ksp(libs.hilt.compiler)
 
-    ksp("com.google.dagger:hilt-compiler:2.38.1")
-
+    implementation (libs.hilt.android.v2481)
+    ksp(libs.hilt.android.compiler)
 
 }
 
-kotlin {
-    sourceSets["main"].kotlin.srcDir("build/generated/ksp/main/kotlin")
-}
+
 //implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.3")
 //implementation("androidx.navigation:navigation-compose:2.7.7")
 //
