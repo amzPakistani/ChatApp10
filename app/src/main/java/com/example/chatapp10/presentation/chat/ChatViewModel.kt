@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.chatapp10.data.remote.ChatSocketService
 import com.example.chatapp10.data.remote.MessageService
 import com.example.chatapp10.util.Resource
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.launchIn
@@ -16,10 +17,11 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class ChatViewModel @Inject constructor(
-    val messageService: MessageService,
-    val chatSocketService: ChatSocketService,
-    val savedStateHandle: SavedStateHandle
+    private val messageService: MessageService,
+    private val chatSocketService: ChatSocketService,
+    private val savedStateHandle: SavedStateHandle
 ):ViewModel() {
     private val _messageText = mutableStateOf("")
     val messageText:State<String> = _messageText

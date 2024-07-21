@@ -28,6 +28,7 @@ import com.example.chatapp10.domain.model.Message
 import kotlinx.coroutines.flow.collectLatest
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -96,7 +97,7 @@ fun ChatList(
                     modifier = Modifier.weight(1f)
                 )
                 IconButton(onClick = viewModel::sendMessage) {
-                    Icon(imageVector = Icons.Filled.Send, contentDescription = "Send Message")
+                    Icon(imageVector = Icons.AutoMirrored.Filled.Send, contentDescription = "Send Message")
                 }
             }
         }

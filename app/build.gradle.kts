@@ -2,8 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     kotlin("plugin.serialization") version "1.9.23"
-    id("com.google.devtools.ksp") version "1.9.20-1.0.14"
-    id("com.google.dagger.hilt.android") version "2.48.1"
+    kotlin("kapt")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -50,12 +50,9 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
-
 }
 
 dependencies {
-
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -89,17 +86,19 @@ dependencies {
 
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.serialization.kotlinx.json)
-
-    implementation(libs.kotlinx.serialization.json)
     implementation(libs.ktor.client.json)
 
-    implementation (libs.hilt.android)
-    implementation (libs.androidx.hilt.lifecycle.viewmodel)
-    implementation (libs.androidx.hilt.navigation.compose)
-    ksp(libs.hilt.compiler)
 
-    implementation (libs.hilt.android.v2481)
-    ksp(libs.hilt.android.compiler)
+    implementation("com.google.dagger:hilt-android:2.51.1")
+    kapt("com.google.dagger:hilt-android-compiler:2.51.1")
+
+
+    implementation ("androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03")
+    kapt("androidx.hilt:hilt-compiler:1.2.0")
+
+
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+
 
 }
 
