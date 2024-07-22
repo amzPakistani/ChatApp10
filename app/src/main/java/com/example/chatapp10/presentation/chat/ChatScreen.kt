@@ -2,6 +2,7 @@ package com.example.chatapp10.presentation.chat
 
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -39,11 +40,13 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -85,12 +88,16 @@ fun ChatScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(
-                        "ChatApp",
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            "ChatApp",
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                    }
                 },
                 scrollBehavior = scrollBehavior
             )
@@ -126,7 +133,7 @@ fun ChatList(
             }
         }
         Box(modifier = Modifier
-            .padding(16.dp)
+            .padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 8.dp)
             .fillMaxWidth()) {
             Row {
                 TextField(
@@ -143,8 +150,9 @@ fun ChatList(
                     )
                 )
                 IconButton(onClick = viewModel::sendMessage) {
-                    Icon(imageVector = Icons.AutoMirrored.Filled.Send, contentDescription = "Send Message")
-                }
+                    CompositionLocalProvider(LocalContentColor provides  Color(0, 81, 212)) {
+                        Icon(imageVector = Icons.AutoMirrored.Filled.Send, contentDescription = "Send Message")
+                    }                }
             }
         }
     }
@@ -168,8 +176,8 @@ fun ChatMessage(
                 .wrapContentWidth()
                 .widthIn(min = 200.dp, max = 330.dp)
                 .background(
-                    color = if (isOwnMessage) Color(150, 150, 150) else Color.DarkGray,
-                    shape = RoundedCornerShape(8.dp)
+                    color = if (isOwnMessage) Color(115, 144, 191) else Color(45, 67, 128),
+                    shape = RoundedCornerShape(12.dp)
                 )
                 .padding(12.dp)
         ) {
