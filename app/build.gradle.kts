@@ -47,9 +47,10 @@ android {
     }
     packaging {
         resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes.add("META-INF/INDEX.LIST")
         }
     }
+    kapt {   correctErrorTypes = true }
 }
 
 dependencies {
@@ -82,48 +83,34 @@ dependencies {
     implementation(libs.ktor.client.serialization)
     implementation(libs.ktor.client.websockets)
     implementation(libs.ktor.client.logging)
-    implementation(libs.logback.classic)
+    implementation ("ch.qos.logback:logback-classic:1.2.11")
+
 
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.ktor.client.json)
 
 
-    implementation("com.google.dagger:hilt-android:2.51.1")
-    kapt("com.google.dagger:hilt-android-compiler:2.51.1")
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
 
 
-    implementation ("androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03")
-    kapt("androidx.hilt:hilt-compiler:1.2.0")
+//    implementation ("androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03")
+    kapt(libs.androidx.hilt.compiler)
 
 
-    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+    implementation(libs.androidx.hilt.navigation.compose)
 
 
 }
 
 
-//implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.3")
-//implementation("androidx.navigation:navigation-compose:2.7.7")
+//implementation("com.google.dagger:hilt-android:2.51.1")
+//kapt("com.google.dagger:hilt-android-compiler:2.51.1")
 //
-//implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-//implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 //
-//implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.3")
+////    implementation ("androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03")
+//kapt("androidx.hilt:hilt-compiler:1.2.0")
 //
-//implementation("io.ktor:ktor-client-core:2.3.12")
-//implementation("io.ktor:ktor-client-cio:2.3.12")
-//implementation("io.ktor:ktor-client-serialization:2.3.12")
-//implementation("io.ktor:ktor-client-websockets:2.3.12")
-//implementation("io.ktor:ktor-client-logging:2.3.12")
-//implementation("ch.qos.logback:logback-classic:1.4.14")
 //
-//implementation("io.ktor:ktor-client-content-negotiation:2.0.0")
-//implementation("io.ktor:ktor-serialization-kotlinx-json:2.0.0")
-//
-//implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
-//implementation("io.ktor:ktor-client-json:2.3.12")
-//
-//implementation ("com.google.dagger:hilt-android:2.49")
-//implementation ("androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03")
-//implementation ("androidx.hilt:hilt-navigation-compose:1.0.0-alpha03")
+//implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
