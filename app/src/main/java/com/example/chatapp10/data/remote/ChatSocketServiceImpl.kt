@@ -12,10 +12,15 @@ import io.ktor.client.request.url
 import io.ktor.websocket.Frame
 import io.ktor.websocket.close
 import io.ktor.websocket.readText
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.withContext
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonPrimitive
 
 
 class ChatSocketServiceImpl(val client: HttpClient):ChatSocketService {
@@ -55,6 +60,17 @@ class ChatSocketServiceImpl(val client: HttpClient):ChatSocketService {
         }catch (e:Exception){
             e.printStackTrace()
             flow {}
+        }
+    }
+
+    override suspend fun deleteMessage(id: String) {
+        try {
+            val deleteMessage= Json.encodeToString(
+                mapOf("action" to "delete", "id" to id)
+            )
+            socket?.send(Frame.Text(deleteMessage))
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 

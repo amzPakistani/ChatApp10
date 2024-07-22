@@ -35,6 +35,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -129,7 +130,8 @@ fun ChatList(
             }
             items(state.messages) { message ->
                 val isOwnMessage = message.username == username
-                ChatMessage(message = message, isOwnMessage = isOwnMessage)
+                val id = message.id
+                ChatMessage(message = message, isOwnMessage = isOwnMessage, viewModel)
             }
         }
         Box(modifier = Modifier
@@ -161,7 +163,8 @@ fun ChatList(
 @Composable
 fun ChatMessage(
     message: Message,
-    isOwnMessage: Boolean
+    isOwnMessage: Boolean,
+    viewModel: ChatViewModel
 ) {
     Box(
         contentAlignment = if (isOwnMessage) {
@@ -197,6 +200,9 @@ fun ChatMessage(
                 modifier = Modifier.align(Alignment.End),
                 color = Color.White
             )
+            IconButton(onClick = { message.id?.let { viewModel.deleteMessage(it) } }) {
+                Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete Message")
+            }
         }
     }
 }

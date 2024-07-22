@@ -18,7 +18,8 @@ data class MessageDto(
         return Message(
             username = username,
             message = message,
-            formattedTime = formattedDate
+            formattedTime = formattedDate,
+            id = id
         )
     }
 }
