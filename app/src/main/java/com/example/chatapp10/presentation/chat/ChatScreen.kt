@@ -2,6 +2,7 @@ package com.example.chatapp10.presentation.chat
 
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -48,11 +49,15 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.chatapp10.presentation.dialog.MessageDialog
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -104,7 +109,7 @@ fun ChatScreen(
             )
 
         }
-    ) { padding->
+    ) { padding ->
         ChatList(viewModel = viewModel, username = username, padding)
     }
 }
@@ -134,9 +139,11 @@ fun ChatList(
                 ChatMessage(message = message, isOwnMessage = isOwnMessage, viewModel)
             }
         }
-        Box(modifier = Modifier
-            .padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 8.dp)
-            .fillMaxWidth()) {
+        Box(
+            modifier = Modifier
+                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 8.dp)
+                .fillMaxWidth()
+        ) {
             Row {
                 TextField(
                     value = viewModel.messageText.value,
@@ -152,9 +159,13 @@ fun ChatList(
                     )
                 )
                 IconButton(onClick = viewModel::sendMessage) {
-                    CompositionLocalProvider(LocalContentColor provides  Color(0, 81, 212)) {
-                        Icon(imageVector = Icons.AutoMirrored.Filled.Send, contentDescription = "Send Message")
-                    }                }
+                    CompositionLocalProvider(LocalContentColor provides Color(0, 81, 212)) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.Send,
+                            contentDescription = "Send Message"
+                        )
+                    }
+                }
             }
         }
     }
@@ -166,6 +177,8 @@ fun ChatMessage(
     isOwnMessage: Boolean,
     viewModel: ChatViewModel
 ) {
+
+
     Box(
         contentAlignment = if (isOwnMessage) {
             Alignment.CenterEnd
@@ -173,35 +186,51 @@ fun ChatMessage(
         modifier = Modifier
             .padding(4.dp)
             .fillMaxWidth()
-    ) {
-        Column(
-            modifier = Modifier
-                .wrapContentWidth()
-                .widthIn(min = 200.dp, max = 330.dp)
-                .background(
-                    color = if (isOwnMessage) Color(115, 144, 191) else Color(45, 67, 128),
-                    shape = RoundedCornerShape(12.dp)
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onLongPress = {
+                        message.id?.let { it1 -> viewModel.showMessageDialog(it1) }
+                    }
                 )
-                .padding(12.dp)
-        ) {
-            Text(
-                text = message.username,
-                fontWeight = FontWeight.SemiBold,
-                color = Color.White,
-            )
-            Text(
-                text = message.message,
-                color = Color.White                ,
-                modifier = Modifier.padding(4.dp)
+            }
+    ) {
+        Column {
+            Column(
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .widthIn(min = 200.dp, max = 330.dp)
+                    .background(
+                        color = if (isOwnMessage) Color(115, 144, 191) else Color(45, 67, 128),
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                    .padding(12.dp)
+            ) {
+                Text(
+                    text = message.username,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.White,
+                )
+                Text(
+                    text = message.message,
+                    color = Color.White,
+                    modifier = Modifier.padding(4.dp)
 
-            )
-            Text(
-                text = message.formattedTime,
-                modifier = Modifier.align(Alignment.End),
-                color = Color.White
-            )
-            IconButton(onClick = { message.id?.let { viewModel.deleteMessage(it) } }) {
-                Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete Message")
+                )
+                Text(
+                    text = message.formattedTime,
+                    modifier = Modifier.align(Alignment.End),
+                    color = Color.White
+                )
+
+            }
+            if (isOwnMessage && viewModel.selectedMessageId.value == message.id) {
+                message.id?.let {
+                    MessageDialog(
+                        viewModel = viewModel,
+                        id = it,
+                        onDismiss = { viewModel.hideMessageDialog() }
+                    )
+                }
             }
         }
     }

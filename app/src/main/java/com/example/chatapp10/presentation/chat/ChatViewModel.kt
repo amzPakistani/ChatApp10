@@ -2,6 +2,7 @@ package com.example.chatapp10.presentation.chat
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.State
+import androidx.compose.runtime.remember
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -31,6 +32,10 @@ class ChatViewModel @Inject constructor(
 
     private val _toastEvent = MutableSharedFlow<String>()
     val toastEvent = _toastEvent.asSharedFlow()
+
+    private val _selectedMessageId = mutableStateOf<String?>(null)
+    val selectedMessageId: State<String?> = _selectedMessageId
+
 
     fun connectToChat(){
         getAllMessages()
@@ -93,6 +98,14 @@ class ChatViewModel @Inject constructor(
                 messages = result
             )
         }
+    }
+
+    fun showMessageDialog(messageId: String) {
+        _selectedMessageId.value = messageId
+    }
+
+    fun hideMessageDialog() {
+        _selectedMessageId.value = null
     }
 
     override fun onCleared() {
