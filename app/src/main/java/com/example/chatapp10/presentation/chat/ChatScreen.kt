@@ -33,6 +33,8 @@ import com.example.chatapp10.domain.model.Message
 import kotlinx.coroutines.flow.collectLatest
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
@@ -49,8 +51,11 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -177,24 +182,50 @@ fun ChatMessage(
     isOwnMessage: Boolean,
     viewModel: ChatViewModel
 ) {
-
+    var messageText by rememberSaveable { mutableStateOf(message.message) }
+    val isEditing = viewModel.editingMessage.value == message.id
 
     Box(
-        contentAlignment = if (isOwnMessage) {
-            Alignment.CenterEnd
-        } else Alignment.CenterStart,
+        contentAlignment = if (isOwnMessage) Alignment.CenterEnd else Alignment.CenterStart,
         modifier = Modifier
             .padding(4.dp)
             .fillMaxWidth()
             .pointerInput(Unit) {
                 detectTapGestures(
                     onLongPress = {
-                        message.id?.let { it1 -> viewModel.showMessageDialog(it1) }
+                        message.id?.let { viewModel.showMessageDialog(it) }
                     }
                 )
             }
     ) {
-        Column {
+        if (isEditing) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.LightGray, shape = RoundedCornerShape(8.dp))
+                    .padding(8.dp)
+            ) {
+                BasicTextField(
+                    value = messageText,
+                    onValueChange = { messageText = it }
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    Button(onClick = {
+                        val editedMessage = message.copy(
+                            message = messageText,
+                            edited = true
+                        )
+                        viewModel.editMessage(editedMessage)
+                        viewModel.endEditMessage()
+                    }) {
+                        Text("Ok")
+                    }
+                }
+            }
+        } else {
             Column(
                 modifier = Modifier
                     .wrapContentWidth()
@@ -208,30 +239,30 @@ fun ChatMessage(
                 Text(
                     text = message.username,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color.White,
+                    color = Color.White
                 )
                 Text(
                     text = message.message,
                     color = Color.White,
                     modifier = Modifier.padding(4.dp)
-
                 )
                 Text(
                     text = message.formattedTime,
                     modifier = Modifier.align(Alignment.End),
-                    color = Color.White
-                )
+                    color = Color.White)
 
-            }
-            if (isOwnMessage && viewModel.selectedMessageId.value == message.id) {
-                message.id?.let {
-                    MessageDialog(
-                        viewModel = viewModel,
-                        id = it,
-                        onDismiss = { viewModel.hideMessageDialog() }
-                    )
+                if (isOwnMessage && viewModel.selectedMessageId.value == message.id) {
+                    message.id?.let {
+                        MessageDialog(
+                            viewModel = viewModel,
+                            id = it,
+                            onDismiss = { viewModel.hideMessageDialog() },
+                            message = message
+                        )
+                    }
                 }
             }
         }
     }
 }
+

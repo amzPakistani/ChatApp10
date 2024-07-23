@@ -6,12 +6,17 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.post
+import io.ktor.client.request.put
+import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
 import io.ktor.http.isSuccess
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 class MessageServiceImpl(private val client:HttpClient):MessageService {
@@ -31,7 +36,13 @@ class MessageServiceImpl(private val client:HttpClient):MessageService {
         client.delete("${MessageService.Endpoints.Delete.url}/$id")
     }
 
-    override suspend fun editMessage(message: Message) {
-        client.post(MessageService.Endpoints.Edit.url)
+    override suspend fun editMessage(message: Message) = withContext(Dispatchers.IO) {
+        val response: HttpResponse = client.put(MessageService.Endpoints.Edit.url) {
+            contentType(ContentType.Application.Json)
+            setBody(Json.encodeToString(message))
+        }
+        if (!response.status.isSuccess()) {
+            throw Exception("Failed to edit message: ${response.status.description}")
+        }
     }
 }

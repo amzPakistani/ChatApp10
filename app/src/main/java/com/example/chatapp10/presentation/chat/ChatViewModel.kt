@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.chatapp10.data.remote.ChatSocketService
 import com.example.chatapp10.data.remote.MessageService
+import com.example.chatapp10.domain.model.Message
 import com.example.chatapp10.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -35,6 +36,10 @@ class ChatViewModel @Inject constructor(
 
     private val _selectedMessageId = mutableStateOf<String?>(null)
     val selectedMessageId: State<String?> = _selectedMessageId
+
+    private val _editingMessage = mutableStateOf<String?>(null)
+    val editingMessage: State<String?> = _editingMessage
+
 
 
     fun connectToChat(){
@@ -67,6 +72,16 @@ class ChatViewModel @Inject constructor(
                 messageService.deleteMessage(it)
                 val updatedMessages = _state.value.messages.filter { message -> message.id != id }
                 _state.value = _state.value.copy(messages = updatedMessages)
+            }
+        }
+    }
+
+    fun editMessage(message: Message){
+        viewModelScope.launch {
+            try {
+                messageService.editMessage(message)
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }
@@ -108,6 +123,13 @@ class ChatViewModel @Inject constructor(
         _selectedMessageId.value = null
     }
 
+    fun startEditMessage(messageId: String){
+        _editingMessage.value = messageId
+    }
+
+    fun endEditMessage(){
+        _editingMessage.value = null
+    }
     override fun onCleared() {
         super.onCleared()
         disconnect()
