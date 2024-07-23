@@ -15,7 +15,7 @@ interface MessageService {
 
     sealed class Endpoints(val url:String){
         data object GetAllMessages:Endpoints("${BASE_URL}/messages")
-        data object Delete: Endpoint("${ChatSocketService.BASE_URL}/delete_message")
-        data object Edit: Endpoint("${ChatSocketService.BASE_URL}/edit_message")
+        data object Delete: Endpoint("${BASE_URL}/delete_message")
+        data object Edit: Endpoint("${BASE_URL}/edit_message")
     }
 }

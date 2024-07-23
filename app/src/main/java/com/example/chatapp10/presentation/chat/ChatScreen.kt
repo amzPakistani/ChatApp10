@@ -215,8 +215,7 @@ fun ChatMessage(
                 ) {
                     Button(onClick = {
                         val editedMessage = message.copy(
-                            message = messageText,
-                            edited = true
+                            message = messageText
                         )
                         viewModel.editMessage(editedMessage)
                         viewModel.endEditMessage()
