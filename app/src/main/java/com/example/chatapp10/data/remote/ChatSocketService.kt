@@ -9,7 +9,6 @@ interface ChatSocketService {
     suspend fun sendMessage(message: String)
     fun observeMessages(): Flow<Message>
     suspend fun closeSession()
-    suspend fun deleteMessage(id:String)
     companion object{
         const val BASE_URL = "ws://192.168.0.159:8080"
     }

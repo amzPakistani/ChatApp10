@@ -3,6 +3,7 @@ package com.example.chatapp10.data.remote
 import com.example.chatapp10.data.remote.dto.MessageDto
 import com.example.chatapp10.domain.model.Message
 import io.ktor.client.HttpClient
+import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
@@ -22,5 +23,10 @@ class MessageServiceImpl(private val client:HttpClient):MessageService {
         } else {
             emptyList()
         }
+    }
+
+
+    override suspend fun deleteMessage(id: String) {
+        client.delete("${MessageService.Endpoints.Delete.url}/$id")
     }
 }

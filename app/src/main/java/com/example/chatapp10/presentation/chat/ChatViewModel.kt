@@ -59,7 +59,7 @@ class ChatViewModel @Inject constructor(
     fun deleteMessage(id: String) {
         viewModelScope.launch {
             id.let {
-                chatSocketService.deleteMessage(it)
+                messageService.deleteMessage(it)
                 val updatedMessages = _state.value.messages.filter { message -> message.id != id }
                 _state.value = _state.value.copy(messages = updatedMessages)
             }

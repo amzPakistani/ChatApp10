@@ -5,6 +5,7 @@ import com.example.chatapp10.domain.model.Message
 import com.example.chatapp10.util.Resource
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.websocket.webSocketSession
+import io.ktor.client.request.delete
 import io.ktor.websocket.WebSocketSession
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.isActive
@@ -15,11 +16,13 @@ import io.ktor.websocket.readText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
 
@@ -52,25 +55,20 @@ class ChatSocketServiceImpl(val client: HttpClient):ChatSocketService {
 
     override fun observeMessages(): Flow<Message> {
         return try {
-            socket?.incoming?.receiveAsFlow()?.map {
-                val json= (it as? Frame.Text)?.readText()?:""
-                val messageDto = Json.decodeFromString<MessageDto>(json)
-                messageDto.toMessage()
-            }?:flow{}
-        }catch (e:Exception){
-            e.printStackTrace()
-            flow {}
-        }
-    }
-
-    override suspend fun deleteMessage(id: String) {
-        try {
-            val deleteMessage= Json.encodeToString(
-                mapOf("action" to "delete", "id" to id)
-            )
-            socket?.send(Frame.Text(deleteMessage))
+            socket?.incoming?.receiveAsFlow()?.mapNotNull {
+                val text = (it as? Frame.Text)?.readText() ?: return@mapNotNull null
+                val json = Json.parseToJsonElement(text)
+                when {
+                    json.jsonObject["action"]?.jsonPrimitive?.content == "delete" -> {
+                        // This is a deletion confirmation, do not treat as a new message
+                        null
+                    }
+                    else -> Json.decodeFromString<MessageDto>(text).toMessage()
+                }
+            } ?: flow {}
         } catch (e: Exception) {
             e.printStackTrace()
+            flow {}
         }
     }
 
