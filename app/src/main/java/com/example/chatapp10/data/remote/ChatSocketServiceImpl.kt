@@ -60,7 +60,6 @@ class ChatSocketServiceImpl(val client: HttpClient):ChatSocketService {
                 val json = Json.parseToJsonElement(text)
                 when {
                     json.jsonObject["action"]?.jsonPrimitive?.content == "delete" -> {
-                        // This is a deletion confirmation, do not treat as a new message
                         null
                     }
                     else -> Json.decodeFromString<MessageDto>(text).toMessage()

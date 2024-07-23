@@ -5,6 +5,7 @@ import com.example.chatapp10.domain.model.Message
 import io.ktor.client.HttpClient
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
+import io.ktor.client.request.post
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.isSuccess
@@ -28,5 +29,9 @@ class MessageServiceImpl(private val client:HttpClient):MessageService {
 
     override suspend fun deleteMessage(id: String) {
         client.delete("${MessageService.Endpoints.Delete.url}/$id")
+    }
+
+    override suspend fun editMessage(message: Message) {
+        client.post(MessageService.Endpoints.Edit.url)
     }
 }
