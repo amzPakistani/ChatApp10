@@ -62,6 +62,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.chatapp10.presentation.dialog.MessageDialog
 
@@ -239,14 +240,20 @@ fun ChatMessage(
                         )
                         .padding(12.dp)
                 ) {
-                    Row {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             text = message.username,
                             fontWeight = FontWeight.SemiBold,
                             color = Color.White
                         )
                         if(message.edited == true){
-                            Text(text = " ( Edited )")
+                            Text(
+                                text = "(edited)",
+                                fontWeight = FontWeight.Medium,
+                                color = Color.White,
+                                modifier = Modifier.padding(start = 6.dp, end = 4.dp, top = 2.dp, bottom = 2.dp),
+                                fontSize = 14.sp
+                            )
                         }
                     }
                     Text(

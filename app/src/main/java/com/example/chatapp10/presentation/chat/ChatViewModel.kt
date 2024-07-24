@@ -81,7 +81,11 @@ class ChatViewModel @Inject constructor(
             try {
                 messageService.editMessage(message)
                 val updatedList = _state.value.messages.map { existingMessage ->
-                    if(existingMessage.id == message.id) message else existingMessage
+                    if(existingMessage.id == message.id) {
+                        message.copy(edited = true)
+                    } else {
+                        existingMessage
+                    }
                 }
                 _state.value = _state.value.copy(messages = updatedList)
             } catch (e: Exception) {
