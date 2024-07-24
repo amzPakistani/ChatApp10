@@ -8,4 +8,5 @@ data class Message(
     val message: String,
     val id: String? = null,
     val edited:Boolean? = null,
+    val action: String? = null
 )

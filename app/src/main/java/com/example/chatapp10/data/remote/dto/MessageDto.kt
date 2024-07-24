@@ -11,7 +11,9 @@ data class MessageDto(
     val id:String,
     val message:String,
     val timeStamp:Long,
-    val edited:Boolean? = null
+    val edited:Boolean? = null,
+    val action: String? = null
+
 ){
     fun toMessage(): Message {
         val date = Date(timeStamp)
@@ -21,7 +23,8 @@ data class MessageDto(
             message = message,
             formattedTime = formattedDate,
             id = id,
-            edited = edited
+            edited = edited,
+            action = action
         )
     }
 }

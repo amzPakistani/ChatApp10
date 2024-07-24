@@ -58,8 +58,20 @@ class ChatSocketServiceImpl(val client: HttpClient):ChatSocketService {
             socket?.incoming?.receiveAsFlow()?.mapNotNull {
                 val text = (it as? Frame.Text)?.readText() ?: return@mapNotNull null
                 val json = Json.parseToJsonElement(text)
-                when {
-                    json.jsonObject["action"]?.jsonPrimitive?.content == "delete" -> {
+                val action = json.jsonObject["action"]?.jsonPrimitive?.content
+
+                when (action) {
+                    "delete" -> {
+                        val id = json.jsonObject["id"]?.jsonPrimitive?.content
+                        id?.let {
+                            return@mapNotNull Message(
+                                id = it,
+                                formattedTime = "",
+                                message = "",
+                                username = "",
+                                action = "delete"
+                            )
+                        }
                         null
                     }
                     else -> Json.decodeFromString<MessageDto>(text).toMessage()

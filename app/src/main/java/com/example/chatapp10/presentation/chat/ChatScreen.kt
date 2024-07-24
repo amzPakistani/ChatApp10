@@ -218,6 +218,15 @@ fun ChatMessage(
                         val editedMessage = message.copy(
                             message = messageText
                         )
+                        viewModel.endEditMessage()
+                    }) {
+                        Text("Cancel")
+                    }
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Button(onClick = {
+                        val editedMessage = message.copy(
+                            message = messageText
+                        )
                         viewModel.editMessage(editedMessage)
                         viewModel.endEditMessage()
                     }) {

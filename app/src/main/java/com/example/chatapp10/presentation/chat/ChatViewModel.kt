@@ -42,23 +42,34 @@ class ChatViewModel @Inject constructor(
 
 
 
-    fun connectToChat(){
+    fun connectToChat() {
         getAllMessages()
         savedStateHandle.get<String>("username")?.let { username ->
             viewModelScope.launch {
                 val result = chatSocketService.initSession(username)
-                when(result){
+                when (result) {
                     is Resource.Error -> {
-                        _toastEvent.emit(result.message?:"Unknown Error")
+                        _toastEvent.emit(result.message ?: "Unknown Error")
                     }
                     is Resource.Success -> {
                         chatSocketService.observeMessages().onEach { message ->
-                            val newList = state.value.messages.toMutableList().apply {
-                                add(0, message)
+                            when (message.action) {
+                                "delete" -> {
+                                    val id = message.id
+                                    if (id != null) {
+                                        _state.value = state.value.copy(
+                                            messages = state.value.messages.filter { it.id != id }
+                                        )
+                                    }
+                                }
+                                else -> {
+                                    val newList = state.value.messages.toMutableList().apply {
+                                        removeIf { it.id == message.id }
+                                        add(0, message)
+                                    }
+                                    _state.value = state.value.copy(messages = newList)
+                                }
                             }
-                            _state.value = state.value.copy(
-                                messages = newList
-                            )
                         }.launchIn(viewModelScope)
                     }
                 }
@@ -76,12 +87,12 @@ class ChatViewModel @Inject constructor(
         }
     }
 
-    fun editMessage(message: Message){
+    fun editMessage(message: Message) {
         viewModelScope.launch {
             try {
                 messageService.editMessage(message)
                 val updatedList = _state.value.messages.map { existingMessage ->
-                    if(existingMessage.id == message.id) {
+                    if (existingMessage.id == message.id) {
                         message.copy(edited = true)
                     } else {
                         existingMessage
