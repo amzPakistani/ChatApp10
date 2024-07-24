@@ -7,4 +7,5 @@ data class Message(
     val formattedTime:String,
     val message: String,
     val id: String? = null,
+    val edited:Boolean? = null
 )

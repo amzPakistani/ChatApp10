@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -146,10 +147,10 @@ fun ChatList(
         }
         Box(
             modifier = Modifier
-                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 8.dp)
+                .padding(start = 16.dp, end = 4.dp, bottom = 16.dp, top = 8.dp)
                 .fillMaxWidth()
         ) {
-            Row {
+            Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
                 TextField(
                     value = viewModel.messageText.value,
                     onValueChange = viewModel::onMessageChange,
@@ -191,25 +192,22 @@ fun ChatMessage(
             .padding(4.dp)
             .fillMaxWidth()
             .pointerInput(Unit) {
-                if (isOwnMessage) {
-                    detectTapGestures(
-                        onLongPress = {
-                            message.id?.let { viewModel.showMessageDialog(it) }
-                        }
-                    )
-                }
+                detectTapGestures(
+                    onLongPress = { offset ->
+                        message.id?.let { viewModel.showMessageDialog(it) }
+                    }
+                )
             }
     ) {
         if (isEditing) {
             Column(
                 modifier = Modifier
+                    .padding(16.dp)
                     .fillMaxWidth()
-                    .background(Color.LightGray, shape = RoundedCornerShape(8.dp))
-                    .padding(8.dp)
             ) {
-                BasicTextField(
+                TextField(
                     value = messageText,
-                    onValueChange = { messageText = it }
+                    onValueChange = { messageText = it }, modifier = Modifier.fillMaxSize()
                 )
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -241,11 +239,16 @@ fun ChatMessage(
                         )
                         .padding(12.dp)
                 ) {
-                    Text(
-                        text = message.username,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color.White
-                    )
+                    Row {
+                        Text(
+                            text = message.username,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.White
+                        )
+                        if(message.edited == true){
+                            Text(text = " ( Edited )")
+                        }
+                    }
                     Text(
                         text = message.message,
                         color = Color.White,
