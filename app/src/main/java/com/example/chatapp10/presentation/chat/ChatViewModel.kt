@@ -80,6 +80,10 @@ class ChatViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 messageService.editMessage(message)
+                val updatedList = _state.value.messages.map { existingMessage ->
+                    if(existingMessage.id == message.id) message else existingMessage
+                }
+                _state.value = _state.value.copy(messages = updatedList)
             } catch (e: Exception) {
                 e.printStackTrace()
             }

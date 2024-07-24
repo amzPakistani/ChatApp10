@@ -191,11 +191,13 @@ fun ChatMessage(
             .padding(4.dp)
             .fillMaxWidth()
             .pointerInput(Unit) {
-                detectTapGestures(
-                    onLongPress = {
-                        message.id?.let { viewModel.showMessageDialog(it) }
-                    }
-                )
+                if (isOwnMessage) {
+                    detectTapGestures(
+                        onLongPress = {
+                            message.id?.let { viewModel.showMessageDialog(it) }
+                        }
+                    )
+                }
             }
     ) {
         if (isEditing) {
@@ -226,37 +228,43 @@ fun ChatMessage(
             }
         } else {
             Column(
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .widthIn(min = 200.dp, max = 330.dp)
-                    .background(
-                        color = if (isOwnMessage) Color(115, 144, 191) else Color(45, 67, 128),
-                        shape = RoundedCornerShape(12.dp)
-                    )
-                    .padding(12.dp)
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = message.username,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.White
-                )
-                Text(
-                    text = message.message,
-                    color = Color.White,
-                    modifier = Modifier.padding(4.dp)
-                )
-                Text(
-                    text = message.formattedTime,
-                    modifier = Modifier.align(Alignment.End),
-                    color = Color.White)
+                Column(
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .widthIn(min = 200.dp, max = 330.dp)
+                        .background(
+                            color = if (isOwnMessage) Color(115, 144, 191) else Color(45, 67, 128),
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                        .padding(12.dp)
+                ) {
+                    Text(
+                        text = message.username,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.White
+                    )
+                    Text(
+                        text = message.message,
+                        color = Color.White,
+                        modifier = Modifier.padding(4.dp)
+                    )
+                    Text(
+                        text = message.formattedTime,
+                        modifier = Modifier.align(Alignment.End),
+                        color = Color.White
+                    )
+
+                }
 
                 if (isOwnMessage && viewModel.selectedMessageId.value == message.id) {
                     message.id?.let {
                         MessageDialog(
                             viewModel = viewModel,
                             id = it,
-                            onDismiss = { viewModel.hideMessageDialog() },
-                            message = message
+                            onDismiss = { viewModel.hideMessageDialog() }
                         )
                     }
                 }
