@@ -215,9 +215,6 @@ fun ChatMessage(
                     horizontalArrangement = Arrangement.End
                 ) {
                     Button(onClick = {
-                        val editedMessage = message.copy(
-                            message = messageText
-                        )
                         viewModel.endEditMessage()
                     }) {
                         Text("Cancel")
