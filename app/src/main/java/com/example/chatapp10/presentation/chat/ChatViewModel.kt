@@ -53,23 +53,24 @@ class ChatViewModel @Inject constructor(
                     }
                     is Resource.Success -> {
                         chatSocketService.observeMessages().onEach { message ->
-                            when (message.action) {
+                            val updatedMessages = when (message.action) {
                                 "delete" -> {
-                                    val id = message.id
-                                    if (id != null) {
-                                        _state.value = state.value.copy(
-                                            messages = state.value.messages.filter { it.id != id }
-                                        )
-                                    }
+                                    _state.value.messages.filter { it.id != message.id }
                                 }
                                 else -> {
-                                    val newList = state.value.messages.toMutableList().apply {
-                                        removeIf { it.id == message.id }
-                                        add(0, message)
+                                    val currentMessages = _state.value.messages.toMutableList()
+                                    val index = currentMessages.indexOfFirst { it.id == message.id }
+
+                                    if (index != -1) {
+                                        currentMessages[index] = message
+                                    } else {
+                                        currentMessages.add(0, message)
                                     }
-                                    _state.value = state.value.copy(messages = newList)
+                                    currentMessages
                                 }
                             }
+
+                            _state.value = _state.value.copy(messages = updatedMessages)
                         }.launchIn(viewModelScope)
                     }
                 }
