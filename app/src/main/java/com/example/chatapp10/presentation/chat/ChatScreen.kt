@@ -186,6 +186,13 @@ fun ChatMessage(
 ) {
     var messageText by rememberSaveable { mutableStateOf(message.message) }
     val isEditing = viewModel.editingMessage.value == message.id
+    val selectedMessageId = viewModel.selectedMessageId.value
+
+    LaunchedEffect(isEditing) {
+        if (isEditing) {
+            messageText = message.message
+        }
+    }
 
     Box(
         contentAlignment = if (isOwnMessage) Alignment.CenterEnd else Alignment.CenterStart,
@@ -194,8 +201,12 @@ fun ChatMessage(
             .fillMaxWidth()
             .pointerInput(Unit) {
                 detectTapGestures(
-                    onLongPress = { offset ->
-                        message.id?.let { viewModel.showMessageDialog(it) }
+                    onLongPress = {
+                        if (isOwnMessage) {
+                            message.id?.let { messageId ->
+                                viewModel.showMessageDialog(messageId)
+                            }
+                        }
                     }
                 )
             }
@@ -208,7 +219,8 @@ fun ChatMessage(
             ) {
                 TextField(
                     value = messageText,
-                    onValueChange = { messageText = it }, modifier = Modifier.fillMaxSize()
+                    onValueChange = { messageText = it },
+                    modifier = Modifier.fillMaxSize()
                 )
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -222,7 +234,8 @@ fun ChatMessage(
                     Spacer(modifier = Modifier.width(4.dp))
                     Button(onClick = {
                         val editedMessage = message.copy(
-                            message = messageText
+                            message = messageText,
+                            edited = true
                         )
                         viewModel.editMessage(editedMessage)
                         viewModel.endEditMessage()
@@ -272,17 +285,14 @@ fun ChatMessage(
                         modifier = Modifier.align(Alignment.End),
                         color = Color.White
                     )
-
                 }
 
-                if (isOwnMessage && viewModel.selectedMessageId.value == message.id) {
-                    message.id?.let {
-                        MessageDialog(
-                            viewModel = viewModel,
-                            id = it,
-                            onDismiss = { viewModel.hideMessageDialog() }
-                        )
-                    }
+                if (isOwnMessage && selectedMessageId== message.id) {
+                    MessageDialog(
+                        viewModel = viewModel,
+                        id = message.id ?: "",
+                        onDismiss = { viewModel.hideMessageDialog() }
+                    )
                 }
             }
         }
