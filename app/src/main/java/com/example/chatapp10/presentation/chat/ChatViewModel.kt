@@ -84,6 +84,7 @@ class ChatViewModel @Inject constructor(
                 messageService.deleteMessage(it)
                 val updatedMessages = _state.value.messages.filter { message -> message.id != id }
                 _state.value = _state.value.copy(messages = updatedMessages)
+                _state.value = _state.value.copy(messages = _state.value.messages)
             }
         }
     }
